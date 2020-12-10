@@ -62,3 +62,32 @@ docker exec -it mongo mongo
 vim ~/.bash_profile
     . .bash_profile
 
+--------
+
+Переходим в папку, где лежит Dockerfile
+    docker build --tag thrift-service .
+    docker -u $login -p $password registry.some.ru
+    docker tag thrift-service registry.some.ru/dev/thrift-service
+    docker push registry.some.ru/dev/thrift-service
+
+Залогиниться в openshift можно из веб приложения, в правом верхнем углу нажимаем на '?' -> Command Line Tools -> Copy Login Command -> Display token -> Log in with this token
+после успешного логина выбираем проект по умолчанию - ci02128305-edevgen-si20
+далее можно создавать приложение в шифте:
+    oc new-app --docker-image registry.some.ru/dev/thrift-service
+
+заходим в веб приложение шифта, в разделе Workloads переходим на страницу Deployments, удаляем созданный шифтом Deployment нашего сервиса
+переходим на страницу Deployment Configs, можно сразу зайти в одно из наших приложений и скопировать конфиг, в редакторе заменить имя сервиса на имя нового сервиса, на странице Deployment Configs нажать Create Deployment Configs, вставляем отредактированный конфиг и сохраняем.
+  Заходим в раздел Networking -> Routes, нажимаем Create Route:
+    Name - имя вашего сервиса
+    Serivce - выбираем шифтовый сервис вашего сервиса
+    Target Port - 8080 -> 8080
+    Нажимаем Create
+
+  Заходим в раздел Networking -> Services, находим шифтовый сервис для вашего сервиса и заходим в него, далее вкладка YAML:
+    ищем внизу конфига строку
+  selector:
+    deployment: ci02128305ci02180808sbindevthrift-service
+  Заменяем строку deployment: ci02128305ci02180808sbindevthrift-service на name: thrift-service
+  Должно получится вот так:
+    selector:
+      name: thrift-service
