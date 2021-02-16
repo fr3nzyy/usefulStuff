@@ -39,6 +39,8 @@ psql -c "CREATE DATABASE app_recruit_middleware;"
 psql -c "CREATE USER postgres WITH ENCRYPTED PASSWORD 'qwerty';"
 psql -c "GRANT ALL PRIVILEGES ON DATABASE app_recruit_middleware TO youruser;"
 
+\c user_data; #select db
+CREATE SCHEMA quickfixj;
 
 
 Mongo
