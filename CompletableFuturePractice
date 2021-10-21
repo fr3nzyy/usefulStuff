@@ -1,0 +1,74 @@
+package com.example.SpringBootTestApp;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.OptionalDouble;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+public class CompletableFuturePractice {
+
+    public static class PriceRetriever {
+
+        public double getPrice(long itemId, long shopId) {
+            // имитация долгого HTTP-запроса
+            int delay = ThreadLocalRandom.current().nextInt(10);
+            try {
+                Thread.sleep(delay * 1000);
+            } catch (InterruptedException e) {
+            }
+
+            double v = ThreadLocalRandom.current().nextDouble(1000);
+            return v;
+        }
+    }
+
+    public static class PriceAggregator {
+
+
+        private PriceRetriever priceRetriever = new PriceRetriever();
+
+        private Set<Long> shopIds = Set.of(10l, 45l, 66l, 345l, 234l, 333l, 67l, 123l, 768l);
+
+        public double getMinPrice(long itemId) {
+            int findMinDelay = 50;
+            long start = System.currentTimeMillis();
+            List<CompletableFuture> futureList = new ArrayList<>();
+            for (Long shopId : shopIds) {
+                futureList.add(CompletableFuture.supplyAsync(() -> priceRetriever.getPrice(itemId, shopId)));
+            }
+            long end = System.currentTimeMillis();
+            try {
+                CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()]))
+                        .get(3000 - (end - start) - findMinDelay, TimeUnit.MILLISECONDS);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            OptionalDouble join = futureList.stream()
+                    .filter(future -> future.isDone() && !future.isCompletedExceptionally())
+                    .map(CompletableFuture::join)
+                    .mapToDouble(it -> Double.parseDouble(it.toString())).min();
+
+            return join.orElse(0.0);
+        }
+    }
+
+    public static void main(String[] args) {
+        PriceAggregator priceAggregator = new PriceAggregator();
+        long itemId = 12l;
+
+        long start = System.currentTimeMillis();
+        double min = priceAggregator.getMinPrice(itemId);
+        long end = System.currentTimeMillis();
+
+        System.out.println(min);
+        System.out.println((end - start) < 3000); // should be true
+    }
+}
