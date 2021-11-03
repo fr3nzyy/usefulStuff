@@ -5,12 +5,8 @@ import java.util.List;
 import java.util.OptionalDouble;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class CompletableFuturePractice {
 
@@ -36,28 +32,23 @@ public class CompletableFuturePractice {
 
         private Set<Long> shopIds = Set.of(10l, 45l, 66l, 345l, 234l, 333l, 67l, 123l, 768l);
 
-        public double getMinPrice(long itemId) throws InterruptedException {
-            long start = System.currentTimeMillis();
-            int findMinDelay = 50;
+        public double getMinPrice(long itemId) {
             List<CompletableFuture> futureList = new ArrayList<>();
             for (Long shopId : shopIds) {
-                futureList.add(CompletableFuture.supplyAsync(() -> priceRetriever.getPrice(itemId, shopId)));
+                futureList.add(CompletableFuture
+                        .supplyAsync(() -> priceRetriever.getPrice(itemId, shopId))
+                        .completeOnTimeout(Double.MAX_VALUE, 2900, TimeUnit.MILLISECONDS));
             }
-            long end = System.currentTimeMillis();
-
-            Thread.sleep(3000 - (end - start) - findMinDelay);
-
-            OptionalDouble join = futureList.stream()
-                    .map(it -> {
-                        return it.getNow(Double.MAX_VALUE);
-                    })
-                    .mapToDouble(it -> Double.parseDouble(it.toString())).min();
+            CompletableFuture<Void> allOf = CompletableFuture.allOf(futureList.toArray(new CompletableFuture[futureList.size()]));
+            OptionalDouble join = allOf.thenApply(v -> futureList.stream()
+                    .map(CompletableFuture::join)
+                    .mapToDouble(it -> Double.parseDouble(it.toString())).min()).join();
 
             return join.orElse(Double.MAX_VALUE);
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         PriceAggregator priceAggregator = new PriceAggregator();
         long itemId = 12l;
 
@@ -69,4 +60,3 @@ public class CompletableFuturePractice {
         System.out.println((end - start) < 3000); // should be true
     }
 }
-
