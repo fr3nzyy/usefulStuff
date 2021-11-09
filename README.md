@@ -1,4 +1,4 @@
-# usefulStuff
+## usefulStuff
 
 Если ИДЕЯ не открывается, в терминале покажет ошибки:  /Applications/IntelliJ\ IDEA.app/Contents/MacOS/idea
 
@@ -9,7 +9,7 @@ echo -n 'xxxxxx' | base64
 
 Кодировка в консоле: chcp 1251
 
-Docker
+##Docker
 
 docker login -u $login -p $password registry.someadrr.ru
 docker build --tag registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15 -f HRP-pipeline/spine-ingress/BaseImage.Dockerfile .
@@ -44,7 +44,7 @@ psql -c "GRANT ALL PRIVILEGES ON DATABASE app_recruit_middleware TO youruser;"
 CREATE SCHEMA quickfixj;
 
 
-Mongo
+##Mongo
 
 docker pull mongo
 docker run -d --name mongo \
@@ -66,6 +66,7 @@ vim ~/.bash_profile
     . .bash_profile
 
 --------
+##OpenShift
 
 Переходим в папку, где лежит Dockerfile
     docker build --tag thrift-service .
@@ -95,17 +96,15 @@ vim ~/.bash_profile
     selector:
       name: thrift-service
       
-      
-      
-KAFKA
+##Kafka
 
-Install Docker Desktop on Windows https://hub.docker.com/editions/community/docker-ce-desktop-windows/
-Download Kafka form https://www.apache.org/dyn/closer.cgi?path=/kafka/2.7.0/kafka_2.12-2.7.0.tgz
-Start Docker Engine
-Make a directory as “ D:\docker”
-Create a docker-compose.yml file in the above directory
+1. Install Docker Desktop on Windows https://hub.docker.com/editions/community/docker-ce-desktop-windows/
+2. Download Kafka form https://www.apache.org/dyn/closer.cgi?path=/kafka/2.7.0/kafka_2.12-2.7.0.tgz
+3. Start Docker Engine
+4. Make a directory as “ D:\docker”
+5. Create a docker-compose.yml file in the above directory
 
-
+```
 version: "3"
 services:
   zookeeper:
@@ -126,11 +125,13 @@ services:
       - ALLOW_PLAINTEXT_LISTENER=yes
     depends_on:
       - zookeeper
-
-
+```
+```
 docker compose up -d
 
 ./kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic helloKafka
 ./kafka-console-producer.sh --broker-list localhost:9092 --topic helloKafka
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloKafka    
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
+```
+
