@@ -94,3 +94,43 @@ vim ~/.bash_profile
   Должно получится вот так:
     selector:
       name: thrift-service
+      
+      
+      
+KAFKA
+
+Install Docker Desktop on Windows https://hub.docker.com/editions/community/docker-ce-desktop-windows/
+Download Kafka form https://www.apache.org/dyn/closer.cgi?path=/kafka/2.7.0/kafka_2.12-2.7.0.tgz
+Start Docker Engine
+Make a directory as “ D:\docker”
+Create a docker-compose.yml file in the above directory
+
+
+version: "3"
+services:
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    ports:
+      - '2181:2181'
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: 'bitnami/kafka:latest'
+    ports:
+      - '9092:9092'
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - ALLOW_PLAINTEXT_LISTENER=yes
+    depends_on:
+      - zookeeper
+
+
+docker compose up -d
+
+./kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic helloKafka
+./kafka-console-producer.sh --broker-list localhost:9092 --topic helloKafka
+./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloKafka    
+./kafka-topics.sh --bootstrap-server localhost:9092 --list
