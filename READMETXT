@@ -29,6 +29,13 @@ Postgres
 docker exec -it -upostgres postgres /bin/bash
 docker exec -it my_postgres psql -U postgres postgres
 
+Show databases
+\l
+First, choose your database
+\c database_name
+Then, this shows all tables in the current schema:
+\dt
+
 psql -la
 psql
 CREATE DATABASE configurator;
