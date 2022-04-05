@@ -133,7 +133,9 @@ docker compose up -d
 ./kafka-console-producer.sh --broker-list localhost:9092 --topic helloKafka
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloKafka    
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
-```
 
 docker-compose -f docker-compose-kafka.yml down
-docker kill $(docker ps -q) 
+docker kill $(docker ps -q)
+```
+
+ 
