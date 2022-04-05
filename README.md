@@ -135,3 +135,5 @@ docker compose up -d
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
 ```
 
+docker-compose -f docker-compose-kafka.yml down
+docker kill $(docker ps -q) 
