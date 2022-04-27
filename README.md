@@ -10,7 +10,7 @@ echo -n 'xxxxxx' | base64
 Кодировка в консоле: chcp 1251
 
 ##Docker
-
+```
 docker login -u $login -p $password registry.someadrr.ru
 docker build --tag registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15 -f HRP-pipeline/spine-ingress/BaseImage.Dockerfile .
 docker push registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15
@@ -36,8 +36,9 @@ docker build -t jaeger-client .
 docker tag 0a19027f8ef2 zhkvaleksey/jaeger-client:latest 
 docker image ls 
 docker push zhkvaleksey/jaeger-client 
-
+```
 ##Postgres
+```
 Зайти в контейнер
 docker exec -it -upostgres postgres /bin/bash
 docker exec -it my_postgres psql -U postgres postgres
@@ -56,9 +57,9 @@ psql -c "GRANT ALL PRIVILEGES ON DATABASE app_recruit_middleware TO youruser;"
 \c user_data; #select db
 CREATE SCHEMA quickfixj;
 
-
+```
 ##Mongo
-
+```
 docker pull mongo
 docker run -d --name mongo \
 -e MONGO_INITDB_ROOT_USERNAME=mongo \
@@ -70,17 +71,10 @@ mongo
 mongo admin -u mongo -p 'mongo' -host localhost -port 27017
 
 docker exec -it mongo mongo
+```
 
-
-
-Редактирование переменных окружения
-
-vim ~/.bash_profile
-    . .bash_profile
-
---------
 ##OpenShift
-
+```
 Переходим в папку, где лежит Dockerfile
     docker build --tag thrift-service .
     docker -u $login -p $password registry.some.ru
@@ -108,15 +102,15 @@ vim ~/.bash_profile
   Должно получится вот так:
     selector:
       name: thrift-service
-      
+```      
 ##Kafka
-
+```
 1. Install Docker Desktop on Windows https://hub.docker.com/editions/community/docker-ce-desktop-windows/
 2. Download Kafka form https://www.apache.org/dyn/closer.cgi?path=/kafka/2.7.0/kafka_2.12-2.7.0.tgz
 3. Start Docker Engine
 4. Make a directory as “ D:\docker”
 5. Create a docker-compose.yml file in the above directory
-
+```
 ```
 version: "3"
 services:
@@ -184,4 +178,8 @@ kubectl exec -n review-adzhukov -it uzcards-kafka-0 -- /bin/bash
 /bitnami/kafka/data/jaeger_v1_test-0$
 cat .log 
 
+Редактирование переменных окружения
+
+vim ~/.bash_profile
+    . .bash_profile
 ```
