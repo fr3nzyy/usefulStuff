@@ -9,7 +9,7 @@ echo -n 'xxxxxx' | base64
 
 Кодировка в консоле: chcp 1251
 
-##Docker
+## Docker
 ```
 docker login -u $login -p $password registry.someadrr.ru
 docker build --tag registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15 -f HRP-pipeline/spine-ingress/BaseImage.Dockerfile .
@@ -37,7 +37,7 @@ docker tag 0a19027f8ef2 zhkvaleksey/jaeger-client:latest
 docker image ls 
 docker push zhkvaleksey/jaeger-client 
 ```
-##Postgres
+## Postgres
 ```
 Зайти в контейнер
 docker exec -it -upostgres postgres /bin/bash
@@ -58,7 +58,7 @@ psql -c "GRANT ALL PRIVILEGES ON DATABASE app_recruit_middleware TO youruser;"
 CREATE SCHEMA quickfixj;
 
 ```
-##Mongo
+## Mongo
 ```
 docker pull mongo
 docker run -d --name mongo \
@@ -73,7 +73,7 @@ mongo admin -u mongo -p 'mongo' -host localhost -port 27017
 docker exec -it mongo mongo
 ```
 
-##OpenShift
+## OpenShift
 ```
 Переходим в папку, где лежит Dockerfile
     docker build --tag thrift-service .
@@ -103,7 +103,7 @@ docker exec -it mongo mongo
     selector:
       name: thrift-service
 ```      
-##Kafka
+## Kafka
 ```
 1. Install Docker Desktop on Windows https://hub.docker.com/editions/community/docker-ce-desktop-windows/
 2. Download Kafka form https://www.apache.org/dyn/closer.cgi?path=/kafka/2.7.0/kafka_2.12-2.7.0.tgz
@@ -144,7 +144,7 @@ chmod +x ./....
 
 ```
 
-##Helm
+## Helm
 
 ```
 Собрать чарт   
@@ -163,7 +163,7 @@ helm install --generate-name ./dbp-tracing -n review-adzhukov
 helm install --name jaeger-client ./jaeger-client
 ```
 
-##Mix
+## Mix
 ```
 git submodule init 
 git submodule update  
