@@ -15,7 +15,6 @@ docker login -u $login -p $password registry.someadrr.ru
 docker build --tag registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15 -f HRP-pipeline/spine-ingress/BaseImage.Dockerfile .
 docker push registry.someadrr.ru/dev/ci01978215/ci01978215_hr-platform_dev/baseimages/openresty:1.15
 
-
 docker login -u user -p pass registry.someadrr.ru
 docker tag todolist registry.someadrr.ru/dev/ci02128305/ci02180808_sbin_dev/todolist:latest
 docker push registry.someadrr.ru/dev/ci02128305/ci02180808_sbin_dev/todolist
@@ -23,8 +22,22 @@ docker push registry.someadrr.ru/dev/ci02128305/ci02180808_sbin_dev/todolist
 Создать контейнер
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -e POSTGRE_USER=postgres -e POSTGRES_DB=postgres -p 5432:5432 -d postgres
 
+docker update --restart=no $(docker ps -a -q)
 
-Postgres
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
+docker kill --signal=SIGINT $(docker ps -a -q)
+
+docker compose up -d
+docker-compose -f docker-compose-kafka.yml down
+docker kill $(docker ps -q)
+
+docker build -t jaeger-client .
+docker tag 0a19027f8ef2 zhkvaleksey/jaeger-client:latest 
+docker image ls 
+docker push zhkvaleksey/jaeger-client 
+
+##Postgres
 Зайти в контейнер
 docker exec -it -upostgres postgres /bin/bash
 docker exec -it my_postgres psql -U postgres postgres
@@ -127,15 +140,48 @@ services:
       - zookeeper
 ```
 ```
-docker compose up -d
+chmod +x ./....
 
 ./kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic helloKafka
 ./kafka-console-producer.sh --broker-list localhost:9092 --topic helloKafka
 ./kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic helloKafka    
 ./kafka-topics.sh --bootstrap-server localhost:9092 --list
 
-docker-compose -f docker-compose-kafka.yml down
-docker kill $(docker ps -q)
+
 ```
 
- 
+##Helm
+
+```
+Собрать чарт   
+helm dep up 
+helm template . 
+
+helm upgrade jaeger-client ./helm/jaeger-client -n review-review-adzhukov-new
+
+helm repo add @dbp 
+helm repo add dbp hhttps://nexus.inno.tech/repository/test-helm --username adzhukov --password 1!Qqweewq
+
+helm upgrade dbp-tracing-1643872854 ./dbp-tracing -n dbp-tracing 
+helm upgrade jaeger-client-1644235080 . -n review-adzhukov
+
+helm install --generate-name ./dbp-tracing -n review-adzhukov
+helm install --name jaeger-client ./jaeger-client
+```
+
+##Mix
+```
+git submodule init 
+git submodule update  
+
+cassandra проверка БД
+kubectl exec -n review-adzhukov -i -t dev-607-adzhukov-cassandra-0 -- /opt/cassandra/bin/cqlsh 
+select * from jaeger_v1_test.traces;
+truncate jaeger_v1_test.traces;
+
+kafka проверка логов
+kubectl exec -n review-adzhukov -it uzcards-kafka-0 -- /bin/bash
+/bitnami/kafka/data/jaeger_v1_test-0$
+cat .log 
+
+```
