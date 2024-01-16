@@ -40,7 +40,7 @@ docker push zhkvaleksey/jaeger-client
 ## Postgres
 ```
 Зайти в контейнер
-docker exec -it -upostgres postgres /bin/bash
+docker exec -it -u postgres postgres /bin/bash
 docker exec -it my_postgres psql -U postgres postgres
 
 psql -la
