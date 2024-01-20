@@ -37,6 +37,15 @@ docker tag 0a19027f8ef2 zhkvaleksey/jaeger-client:latest
 docker image ls 
 docker push zhkvaleksey/jaeger-client 
 ```
+
+gradle clean build
+docker build --platform linux/amd64 -t quotes . 
+docker build -t quotes . 
+
+docker images
+docker tag 66b32bfa73cb zhkvaleksey/quotes:latest
+docker push zhkvaleksey/quotes
+
 ## Postgres
 ```
 Зайти в контейнер
